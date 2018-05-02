@@ -1,0 +1,18 @@
+#!/usr/bin/env elvish
+initialized = $false
+blocks = [&]
+
+i3blocks | each [line]{
+  if $initialized {
+    for block (echo $line[1:] | from-json) {
+      if (has-key $block label) {
+	blocks[$block[label]] = $block[name]
+      }
+    }
+  }
+  else { initialized = $true }
+}
+
+sxhkd | each [line]{
+  notify-send $line $blocks[line]
+}
